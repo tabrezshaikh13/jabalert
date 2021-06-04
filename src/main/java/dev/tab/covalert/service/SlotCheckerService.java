@@ -6,29 +6,54 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
+
 import javax.annotation.PostConstruct;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import dev.tab.covalert.model.Client;
+import dev.tab.covalert.repository.ClientRepository;
 
 @Service
 public class SlotCheckerService {
 
     private final String PINCODE_API_URL = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin";
+    @Autowired
     private EmailService mailService;
+    @Autowired
+    private ClientRepository clientRepo;
 
-    public SlotCheckerService(EmailService mailService) {
-        this.mailService = mailService;
+    public SlotCheckerService() {
+
     }
 
     @PostConstruct
     @Scheduled(cron = "0 0/30 * 1/1 * ?")
-    public void check() {
+    public void run() {
+        List<Client> clients = clientRepo.findAll();
+        Thread[] threads = new Thread[(int) clientRepo.count()];
+        for (int i = 0; i < threads.length; i++) {
+            Client client = clients.get(i);
+            threads[i] = new Thread(new Runnable() {
+                public void run() {
+                    check(client);
+                }
+            });
+            threads[i].start();
+        }
+    }
+
+    @Async
+    public void check(Client client) {
         String jsonResponse = "";
-        int pinCode = 411037;
+        int pinCode = client.getPincode();
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         String API_URL = PINCODE_API_URL + "?pincode=" + pinCode + "&date=" + date;
         
@@ -55,7 +80,7 @@ public class SlotCheckerService {
                     int ageGroup = session.getInt("min_age_limit");
                     String vaccineBrand = session.getString("vaccine");
                     if(vaccineAvailability > 0) {
-                        this.generateNotificationEmail(vaccinationCenter, vaccineAvailability, ageGroup, vaccineBrand);
+                        this.generateNotificationEmail(vaccinationCenter, vaccineAvailability, ageGroup, vaccineBrand, client);
                         Thread.sleep(10000);
                     }
                 }
@@ -70,16 +95,16 @@ public class SlotCheckerService {
 
     }
 
-    public void generateNotificationEmail(String vaccinationCenter, int vaccineAvailability, int ageGroup, String vaccineBrand) {
+    public void generateNotificationEmail(String vaccinationCenter, int vaccineAvailability, int ageGroup, String vaccineBrand, Client client) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom("cowinslotify@gmail.com");
         mailMessage.setSubject("Cowin slot alert");
         if(ageGroup == 18) {
-            mailMessage.setText(vaccineAvailability + " doses available of " + vaccineBrand + " at " + vaccinationCenter + " for age group 18-44");
+            mailMessage.setText(vaccineAvailability + " doses of " + vaccineBrand + " available at " + vaccinationCenter + " for age group 18+");
         } else {
-            mailMessage.setText(vaccineAvailability + " doses available of " + vaccineBrand + " at " + vaccinationCenter + " for age group 45+");
+            mailMessage.setText(vaccineAvailability + " doses of " + vaccineBrand + " available at " + vaccinationCenter + " for age group 45+");
         }
-        mailMessage.setTo("tabrezshaikh17971@gmail.com");
+        mailMessage.setTo(client.getEmail());
         mailService.sendNotification(mailMessage);
     }
     
