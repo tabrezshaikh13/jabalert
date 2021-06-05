@@ -2,25 +2,27 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" th:href="@{/images/jabalert-icon.png}"
+        type = "image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
         rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <title>Covalert</title>
+    <title>JabAlert</title>
 </head>
 <body>
 
     <div class="container-fluid p-2 bg-dark text-white text-center">
-        <h1 class="h1">Covalert</h1>
+        <h1 class="h1">JabAlert</h1>
         <p class="display-6">Get notified each time there's a slot available at your pincode.</p>
     </div>
 
     <div class="container mt-2 mb-4 p-2 border border-3 border-dark rounded-3">
         <div th:if="${param.registrationSuccess}" class="alert alert-success" role="alert">
-            Your email has been successfully registered to Covalert. You'll get notified via cowinslotify@gmail.com about slot availability.
+            Your email has been successfully registered to JabAlert. You'll get notified via email about slot availability.
         </div>
         <form th:action="@{/}" th:object="${clientDTO}" method="POST">
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" th:field="*{email}">
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" th:field="*{email}" required>
                 <div id="emailHelp" class="form-text">
                     Please do not provide with false information to maintain
                     the integrity of the situation. We'll never share your email with anyone else.
@@ -28,7 +30,7 @@
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Pincode</label>
-                <input type="number" class="form-control" id="exampleInputPassword1" minlength="6" th:field="*{pincode}">
+                <input type="number" class="form-control" id="exampleInputPassword1" maxlength="6" th:field="*{pincode}" required>
             </div>
             <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
         </form>
@@ -40,7 +42,7 @@
                 <p class="h6">Vaccination is totally safe. Do not succumb to any rumours against the vaccines. Get yourself vaccinated ASAP.</p>
             </div>
             <div class="col-4 justify-content-end">
-                <p>Covalert&#8482 : Sole proprietary of Tabrez A. Shaikh</p>
+                <p>JabAlert&#8482 : Sole proprietary of Tabrez A. Shaikh</p>
             </div>
         </div>
     </div>
