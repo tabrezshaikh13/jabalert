@@ -1,0 +1,52 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" th:href="@{/images/jabalert-icon.png}"
+        type = "image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>JabAlert</title>
+</head>
+
+<body th:background="@{/images/jabalert-bg.jpg}" background="../static/images/jabalert-bg.jpg">
+
+    <div class="container-fluid p-2 bg-dark text-white text-center">
+        <h1 class="h1">JabAlert</h1>
+        <p class="display-6">Get notified each time there's a slot available at your pincode.</p>
+    </div>
+
+    <div class="container mt-2 p-2 border border-3 border-dark rounded-3 bg-white">
+        <div th:if="${param.unsubscribeSuccess}" class="alert alert-success h2" role="alert">
+            Your email and associated pincode has been deleted permanently. You will no longer get slot alert notifications.
+        </div>
+        <div th:if="${param.emailNotExists}" class="alert alert-danger h2" role="alert">
+            Looks like the email you entered does not exist or has already been deleted permanently.
+        </div>
+        <form th:action="@{/unsubscribe}" th:object="${unsubscribeDTO}" method="POST">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Enter your registered email address to unsubscribe from getting notifications.</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" th:field="*{email}" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a type="button" class="btn btn-outline-primary" th:href="@{/}">Home</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="container mt-2 mb-1 pt-1 bg-dark text-white rounded rounded-3">
+        <div class="row">
+            <div class="col-8">
+                <p class="h6">Vaccination is totally safe. Do not fall prey to any rumours against the vaccines. Get yourself vaccinated ASAP.</p>
+            </div>
+            <div class="col-4 justify-content-end">
+                <p>JabAlert&#8482 : Sole proprietary of Tabrez A. Shaikh</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

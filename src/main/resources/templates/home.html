@@ -1,4 +1,5 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,38 +9,91 @@
         rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <title>JabAlert</title>
 </head>
-<body>
+
+<body th:background="@{/images/jabalert-bg.jpg}">
 
     <div class="container-fluid p-2 bg-dark text-white text-center">
         <h1 class="h1">JabAlert</h1>
         <p class="display-6">Get notified each time there's a slot available at your pincode.</p>
     </div>
-
-    <div class="container mt-2 mb-4 p-2 border border-3 border-dark rounded-3">
-        <div th:if="${param.registrationSuccess}" class="alert alert-success" role="alert">
+    
+    <div class="container mt-2 p-2 border border-3 border-dark rounded-3 bg-white">
+        <div th:if="${param.registrationSuccess}" class="alert alert-success h2" role="alert">
             Your email has been successfully registered to JabAlert. You'll get notified via email about slot availability.
+        </div>
+        <div th:if="${param.userAlreadyExists}" class="alert alert-danger h2" role="alert">
+            Looks like the email you entered is already registered for a pincode. Try using another email address.
+        </div>
+        <div th:if="${param.pincodeError}" class="alert alert-danger h2" role="alert">
+            Your email was not registered. Please check if you are entering the pincode correctly (6 digits without a zero at the start).
         </div>
         <form th:action="@{/}" th:object="${clientDTO}" method="POST">
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" th:field="*{email}" required>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    th:field="*{email}" required>
                 <div id="emailHelp" class="form-text">
-                    Please do not provide with false information to maintain
+                    Please do not provide with false information to maintain seriousness and
                     the integrity of the situation. We'll never share your email with anyone else.
                 </div>
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Pincode</label>
-                <input type="number" class="form-control" id="exampleInputPassword1" maxlength="6" th:field="*{pincode}" required>
+                <input type="number" class="form-control" id="exampleInputPassword1" minlength="6" th:field="*{pincode}" required>
+                <div class="form-text">
+                    Make sure you enter your pincode properly (6 digits without a zero at the start). Any misinformation can lead to false slot alerts.  
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
+            <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a type="button" class="btn btn-outline-primary" th:href="@{/unsubscribe}">Unsubscribe</a>
+            </div>
         </form>
     </div>
 
-    <div class="container pt-1 bg-dark text-white border border-3 border-primary rounded rounded-3">
+    <div class="container mt-1 p-2 bg-dark rounded-3">
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="card bg-danger border border-2 border-white rounded rounded-3" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white h2">Important announcement !!!</h5>
+                        <h5 class="card-subtitle mb-2 text-white" th:inline="text">We are limiting our services.</h5>
+                        <p class="card-text text-light">
+                            Due to some unforeseen and unexpected circumstances, we will now be sending slot alert notifications
+                            only for the age group 18-45. We are extremely sorry for the inadequate response
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="card bg-dark border border-2 border-white rounded rounded-3" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white-50">Total registrations so far</h5>
+                        <h6 class="card-subtitle mb-2 text-white" th:inline="text">[[${totalRegistrations}]] and counting</h6>
+                        <p class="card-text text-light">For any slot related queries, contact - <a target="_blank"
+                            href="https://mail.google.com/mail/">advtouseef07@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card bg-dark border border-2 border-white rounded rounded-3" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white-50">More updates coming soon...</h5>
+                        <h6 class="card-subtitle mb-2 text-white" th:inline="text">Double up on your masks while stepping out and maintain distancing.</h6>
+                        <p class="card-text text-light">Read the latest news from WHO regarding the COVID-19 vaccines <a target="_blank"
+                            href="https://www.who.int/news-room/q-a-detail/coronavirus-disease-(covid-19)-vaccines?adgroupsurvey={adgroupsurvey}&gclid=Cj0KCQjwweyFBhDvARIsAA67M71xpuU0tkUiS2DNJPbmsnqM_wl1ikEJFqFlQSzWvRKexP9Dralre24aAgRQEALw_wcB">here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container mt-2 mb-1 pt-1 bg-dark text-white rounded rounded-3">
         <div class="row">
             <div class="col-8">
-                <p class="h6">Vaccination is totally safe. Do not succumb to any rumours against the vaccines. Get yourself vaccinated ASAP.</p>
+                <p class="h6">Vaccination is totally safe. Do not fall prey to any rumours against the vaccines. Get yourself vaccinated ASAP.</p>
             </div>
             <div class="col-4 justify-content-end">
                 <p>JabAlert&#8482 : Sole proprietary of Tabrez A. Shaikh</p>

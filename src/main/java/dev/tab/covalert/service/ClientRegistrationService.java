@@ -12,6 +12,7 @@ public class ClientRegistrationService {
 
     @Autowired
     private ClientRepository clientRepo;
+    private int totalRegistrations;
 
     public ClientRegistrationService() {
 
@@ -20,6 +21,20 @@ public class ClientRegistrationService {
     public void registerClient(ClientDTO clientDto) {
         Client client = new Client(clientDto.getEmail(), clientDto.getPincode());
         clientRepo.save(client);
+    }
+
+    public boolean checkIfEmailExists(String email) {
+        boolean clientExists = false;
+        Client client = clientRepo.findByEmail(email);
+        if(client != null) {
+            clientExists = true;
+        } 
+        return clientExists;
+    }
+
+    public int getTotalRegistrations() {
+        totalRegistrations = clientRepo.findAll().size();
+        return totalRegistrations;
     }
     
 }

@@ -1,0 +1,24 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" th:href="@{/images/jabalert-icon.png}"
+        type = "image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>JabAlert</title>
+</head>
+
+<body>
+
+    <div class="alert alert-danger display-3" role="alert">
+        Looks like something went wrong :-/ 
+        <br>
+        Go back to <a th:href="@{/}" style="text-decoration: none;">home page</a> or try again later.
+    </div>    
+
+    <img th:src="@{/images/error-bg.png}" style="height: 500px;">
+
+</body>
+</html>

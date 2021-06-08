@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import dev.tab.covalert.service.ClientRegistrationService;
 
 
@@ -26,13 +25,23 @@ public class HomeController {
     @GetMapping
     public String showHomePage(Model model) {
         model.addAttribute("clientDTO", getClientDTO());
+        model.addAttribute("totalRegistrations", clientRegistrationService.getTotalRegistrations());
         return "home";
     }
     
     @PostMapping
     public String registerClient(@ModelAttribute(name = "clientDTO") ClientDTO client) {
-        clientRegistrationService.registerClient(client);
-        return "redirect:/?registrationSuccess";
+        if(String.valueOf(client.getPincode()).length() == 6 && String.valueOf(client.getPincode()).charAt(0) != '0') {
+            if(clientRegistrationService.checkIfEmailExists(client.getEmail())) {
+                return "redirect:/?userAlreadyExists";
+            } else {
+                clientRegistrationService.registerClient(client);
+                return "redirect:/?registrationSuccess";
+            }
+        } else {
+            return "redirect:/?pincodeError";
+        }
+        
     }
 
 }
